@@ -57,7 +57,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "7.0.1";
+        return "7.0.2";
     }
 
     @Override
@@ -332,7 +332,10 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         if (prefix == null) {
             prefix = "";
         } else {
-            String paramName = prefix + "_" + element.getPropertyString(FormUtil.PROPERTY_ID);
+            String paramName = prefix;
+            if (element.getParent() != this) {
+                paramName += "_" + element.getPropertyString(FormUtil.PROPERTY_ID);
+            }
             element.setCustomParameterName(paramName);
         }
             
