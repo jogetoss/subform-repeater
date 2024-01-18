@@ -7,8 +7,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ import org.joget.apps.form.model.FormStoreBinder;
 import org.joget.apps.form.service.FormService;
 import org.joget.apps.form.service.FormUtil;
 import org.joget.commons.util.LogUtil;
+import org.joget.commons.util.ResourceBundleUtil;
 import org.joget.commons.util.SecurityUtil;
 import org.joget.commons.util.StringUtil;
 import org.joget.commons.util.UuidGenerator;
@@ -533,6 +536,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
     public Boolean selfValidate(FormData formData) {
         this.formData = formData;
         Boolean valid = super.selfValidate(formData);
+        String id = FormUtil.getElementParameterName(this);
         
         //run validation for all editable row
         boolean rowsValid = true;
@@ -552,9 +556,23 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
         if (!rowsValid) {
             valid = false;
-            String id = FormUtil.getElementParameterName(this);
             String errorMsg = AppPluginUtil.getMessage("form.subformRepeater.error.rowData", getClassName(), MESSAGE_PATH);
             formData.addFormError(id, errorMsg);
+        }
+
+         String uniqueKey = getPropertyString("uniqueKey");
+        if (uniqueKey != null && !uniqueKey.isEmpty()) {
+            Set<String> values = new HashSet<String>();
+            for (FormRow r : rowSet) {
+                String value = r.getProperty(uniqueKey);
+                if (!values.contains(value)) {
+                    values.add(value);
+                } else {
+                    valid = false;
+                    String errorMsg = AppPluginUtil.getMessage("form.subformRepeater.error.uniqueKey", getClassName(), MESSAGE_PATH);
+                    formData.addFormError(id, errorMsg);
+                }
+            }
         }
         
         return valid;
