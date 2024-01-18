@@ -60,7 +60,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "7.0.3";
+        return "7.0.4";
     }
 
     @Override
