@@ -104,6 +104,8 @@
                 collapseRow(row, o);
             }
         });
+        
+        $("body").trigger("dynamicContentLoaded");
     }
     
     function updatePositionIndex(target, o) {
