@@ -4,7 +4,7 @@
     <groupId>org.joget</groupId>
     <artifactId>subform_repeater</artifactId>
     <packaging>bundle</packaging>
-    <version>7.0.5</version>
+    <version>7.0.7</version>
     <name>subform_repeater</name>
     <url>http://www.joget.org</url>
     <build>

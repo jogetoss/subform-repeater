@@ -104,8 +104,17 @@
                 collapseRow(row, o);
             }
         });
-        
-        $("body").trigger("dynamicContentLoaded");
+        attachButtonEffect();
+    }
+    
+    function attachButtonEffect() {
+        setTimeout(function () {
+            Waves.attach(".btn:not(.waves-button), .form-button:not(.waves-button), button:not(.waves-button), input[type=button]:not(.waves-button), input[type=reset]:not(.waves-button), input[type=submit]:not(.waves-button)", [
+                "btn",
+                "waves-button",
+                "waves-float",
+            ]);
+        }, 0);
     }
     
     function updatePositionIndex(target, o) {
