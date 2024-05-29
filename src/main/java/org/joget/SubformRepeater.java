@@ -60,7 +60,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "7.0.7";
+        return "7.0.8";
     }
 
     @Override
@@ -422,7 +422,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             row.putAll(rowMap);
         }
         
-        String uniqueValue = "uv" + Long.toString(System.currentTimeMillis());
+        String uniqueValue = "uv" + UuidGenerator.getInstance().getUuid();
         
         if (row != null && row.getProperty("RS_UNIQUE_VALUE") != null) {
             uniqueValue = row.getProperty("RS_UNIQUE_VALUE");
