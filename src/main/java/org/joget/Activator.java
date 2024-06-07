@@ -15,6 +15,7 @@ public class Activator implements BundleActivator {
 
         //Register plugin here
         registrationList.add(context.registerService(SubformRepeater.class.getName(), new SubformRepeater(), null));
+        registrationList.add(context.registerService(SubformRepeaterStoreBinderWrapper.class.getName(), new SubformRepeaterStoreBinderWrapper(null, null), null));
     }
 
     public void stop(BundleContext context) {
