@@ -1,250 +1,276 @@
-[{
-    title : '@@form.subformRepeater.config@@',
-    properties : [{
-        name : 'id',
-        label : '@@form.formgrid.id@@',
-        type : 'textfield',
-        required : 'True',
-        regex_validation : '^[a-zA-Z0-9_]+$',
-        validation_message : '@@form.formgrid.invalidId@@'
+[
+    {
+        "title": "@@form.subformRepeater.config@@",
+        "properties": [
+            {
+                "name": "id",
+                "label": "@@form.formgrid.id@@",
+                "type": "textfield",
+                "required": "True",
+                "regex_validation": "^[a-zA-Z0-9_]+$",
+                "validation_message": "@@form.formgrid.invalidId@@"
+            },
+            {
+                "name": "label",
+                "label": "@@form.formgrid.label@@",
+                "type": "textfield",
+                "value": "@@org.joget.SubformRepeater.pluginLabel@@"
+            },
+            {
+                "name": "formDefId",
+                "label": "@@form.formgrid.formId@@",
+                "type": "selectbox",
+                "required": "True",
+                "options_ajax": "[CONTEXT_PATH]/web/json/console/app[APP_PATH]/forms/options"
+            }
+        ]
     },
     {
-        name : 'label',
-        label : '@@form.formgrid.label@@',
-        type : 'textfield',
-        value : '@@org.joget.SubformRepeater.pluginLabel@@'
+        "title": "@@form.formgrid.ui@@",
+        "properties": [
+            {
+                "name": "readonly",
+                "label": "@@form.formgrid.readonly@@",
+                "type": "checkbox",
+                "value": "",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": "@@form.subformRepeater.yes@@"
+                    }
+                ]
+            },
+            {
+                "name": "addMode",
+                "label": "@@form.subformRepeater.addMode@@",
+                "type": "selectbox",
+                "value": "normal",
+                "options": [
+                    {
+                        "value": "enable",
+                        "label": "@@form.subformRepeater.enable@@"
+                    },
+                    {
+                        "value": "oneTop",
+                        "label": "@@form.subformRepeater.addMode.oneTop@@"
+                    },
+                    {
+                        "value": "oneBottom",
+                        "label": "@@form.subformRepeater.addMode.oneBottom@@"
+                    },
+                    {
+                        "value": "disable",
+                        "label": "@@form.subformRepeater.disable@@"
+                    }
+                ],
+                "control_field": "readonly",
+                "control_value": "",
+                "control_use_regex": "false"
+            },
+            {
+                "name": "editMode",
+                "label": "@@form.subformRepeater.editMode@@",
+                "type": "selectbox",
+                "value": "enable",
+                "options": [
+                    {
+                        "value": "enable",
+                        "label": "@@form.subformRepeater.enable@@"
+                    },
+                    {
+                        "value": "disable",
+                        "label": "@@form.subformRepeater.disable@@"
+                    }
+                ],
+                "control_field": "readonly",
+                "control_value": "",
+                "control_use_regex": "false"
+            },
+            {
+                "name": "deleteMode",
+                "label": "@@form.subformRepeater.deleteMode@@",
+                "type": "selectbox",
+                "value": "enable",
+                "options": [
+                    {
+                        "value": "enable",
+                        "label": "@@form.subformRepeater.enable@@"
+                    },
+                    {
+                        "value": "disable",
+                        "label": "@@form.subformRepeater.disable@@"
+                    }
+                ],
+                "control_field": "readonly",
+                "control_value": "",
+                "control_use_regex": "false"
+            },
+            {
+                "name": "readonlyLabel",
+                "label": "@@form.formgrid.readonlyLabel@@",
+                "type": "checkbox",
+                "value": "",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ]
+            },
+            {
+                "name": "editFormDefId",
+                "label": "@@form.subformRepeater.editFormDefId@@",
+                "type": "selectbox",
+                "options_ajax": "[CONTEXT_PATH]/web/json/console/app[APP_PATH]/forms/options"
+            },
+            {
+                "name": "enableSorting",
+                "label": "@@form.formgrid.enableSorting@@",
+                "type": "checkbox",
+                "value": "",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ],
+                "control_field": "readonly",
+                "control_value": "",
+                "control_use_regex": "false"
+            },
+            {
+                "name": "sortField",
+                "label": "@@form.formgrid.sortField@@",
+                "type": "textfield",
+                "description": "@@form.formgrid.sortField.desc@@",
+                "value": "sort",
+                "control_field": "enableSorting",
+                "control_value": "true",
+                "control_use_regex": "false"
+            },
+            {
+                "name": "collapsible",
+                "label": "@@form.subformRepeater.collapsible@@",
+                "type": "checkbox",
+                "value": "true",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ]
+            },
+            {
+                "name": "collapsedByDefault",
+                "label": "@@form.subformRepeater.collapsedByDefault@@",
+                "type": "checkbox",
+                "value": "",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ],
+                "control_field": "collapsible",
+                "control_value": "true",
+                "control_use_regex": "false"
+            }
+        ]
     },
     {
-        name : 'formDefId',
-        label : '@@form.formgrid.formId@@',
-        type : 'selectbox',
-        required : 'True',
-        options_ajax : '[CONTEXT_PATH]/web/json/console/app[APP_PATH]/forms/options'
-    }]
-},
-{
-    title : '@@form.formgrid.ui@@',
-    properties : [
-    {
-        name : 'readonly',
-        label : '@@form.formgrid.readonly@@',
-        type : 'checkbox',
-        value : '',
-        options : [{
-            value : 'true',
-            label : '@@form.subformRepeater.yes@@'
-        }]
-    },
-    {
-        name : 'addMode',
-        label : '@@form.subformRepeater.addMode@@',
-        type : 'selectbox',
-        value : 'normal',
-        options : [{
-            value : 'enable',
-            label : '@@form.subformRepeater.enable@@'
-        },
-        {
-            value : 'oneTop',
-            label : '@@form.subformRepeater.addMode.oneTop@@'
-        },
-        {
-            value : 'oneBottom',
-            label : '@@form.subformRepeater.addMode.oneBottom@@'
-        },
-        {
-            value : 'disable',
-            label : '@@form.subformRepeater.disable@@'
-        }],
-        control_field: 'readonly',
-        control_value: '',
-        control_use_regex: 'false'
-    },
-    {
-        name : 'editMode',
-        label : '@@form.subformRepeater.editMode@@',
-        type : 'selectbox',
-        value : 'enable',
-        options : [{
-            value : 'enable',
-            label : '@@form.subformRepeater.enable@@'
-        },
-        {
-            value : 'disable',
-            label : '@@form.subformRepeater.disable@@'
-        }],
-        control_field: 'readonly',
-        control_value: '',
-        control_use_regex: 'false'
-    },
-    {
-        name : 'deleteMode',
-        label : '@@form.subformRepeater.deleteMode@@',
-        type : 'selectbox',
-        value : 'enable',
-        options : [{
-            value : 'enable',
-            label : '@@form.subformRepeater.enable@@'
-        },
-        {
-            value : 'disable',
-            label : '@@form.subformRepeater.disable@@'
-        }],
-        control_field: 'readonly',
-        control_value: '',
-        control_use_regex: 'false'
-    },
-    {
-        name : 'readonlyLabel',
-        label : '@@form.formgrid.readonlyLabel@@',
-        type : 'checkbox',
-        value : '',
-        options : [{
-            value : 'true',
-            label : ''
-        }]
-    },
-    {
-        name : 'editFormDefId',
-        label : '@@form.subformRepeater.editFormDefId@@',
-        type : 'selectbox',
-        options_ajax : '[CONTEXT_PATH]/web/json/console/app[APP_PATH]/forms/options'
-    },
-    {
-        name : 'enableSorting',
-        label : '@@form.formgrid.enableSorting@@',
-        type : 'checkbox',
-        value : '',
-        options : [{
-            value : 'true',
-            label : ''
-        }],
-        control_field: 'readonly',
-        control_value: '',
-        control_use_regex: 'false'
-    },
-    {
-        name : 'sortField',
-        label : '@@form.formgrid.sortField@@',
-        type : 'textfield',
-        description : '@@form.formgrid.sortField.desc@@',
-        value : 'sort',
-        control_field: 'enableSorting',
-        control_value: 'true',
-        control_use_regex: 'false'
-    },
-    {
-        name : 'collapsible',
-        label : '@@form.subformRepeater.collapsible@@',
-        type : 'checkbox',
-        value : 'true',
-        options : [{
-            value : 'true',
-            label : ''
-        }]
-    },
-    {
-        name : 'collapsedByDefault',
-        label : '@@form.subformRepeater.collapsedByDefault@@',
-        type : 'checkbox',
-        value : '',
-        options : [{
-            value : 'true',
-            label : ''
-        }],
-        control_field: 'collapsible',
-        control_value: 'true',
-        control_use_regex: 'false'
-    }]
-},
-{
-    title : '@@form.formgrid.validationAndData@@',
-    properties : [{
-        label : '@@form.formgrid.validation@@',
-        type : 'header'
-    },
-    {
-        name : 'validator',
-        label : '@@form.formgrid.validator@@',
-        type : 'elementselect',
-        options_ajax : '[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormMultiRowValidator',
-        url : '[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions'
-    },
-    {
-        name : 'uniqueKey',
-        label : '@@form.formgrid.uniqueKey@@',
-        description : '@@form.formgrid.uniqueKey.desc@@',
-        type : 'selectbox',
-        options_ajax_on_change : 'formDefId',
-        options_ajax : '[CONTEXT_PATH]/web/json/console/app[APP_PATH]/form/columns/options',
-    },
-    {
-        name : 'validateMinRow',
-        label : '@@form.formgrid.validateMinRow@@',
-        type : 'textfield'
-    },
-    {
-        name : 'validateMaxRow',
-        label : '@@form.formgrid.validateMaxRow@@',
-        type : 'textfield'
-    },
-    {
-        name : 'errorMessage',
-        label : '@@form.formgrid.errorMessage@@',
-        type : 'textfield',
-        value : '@@form.formgrid.invalidNumberOfRow@@'
-    },
-    {
-        label : '@@form.formgrid.dataBinder@@',
-        type : 'header'
-    },
-    {
-        name : 'loadBinder',
-        label : '@@form.formgrid.loadBinder@@',
-        type : 'elementselect',
-        options_ajax : '[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormLoadMultiRowElementBinder',
-        url : '[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions'
-    },
-    {
-        name : 'storeBinder',
-        label : '@@form.formgrid.storeBinder@@',
-        type : 'elementselect',
-        options_ajax : '[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormStoreMultiRowElementBinder',
-        url : '[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions'
-    },
-    {
-        label : '@@form.subformRepeater.defaultAddFormAdvanced@@',
-        type : 'header',
-        description: '@@form.subformRepeater.defaultAddFormAdvanced.desc@@',
-        control_field: 'addMode',
-        control_value: 'oneTop|oneBottom',
-        control_use_regex: 'true'
-    },
-    {
-        name : 'setWorkflowVariable',
-        label : '@@form.subformRepeater.setWorkflowVariable@@',
-        type : 'checkbox',
-        value : '',
-        options : [{
-            value : 'true',
-            label : ''
-        }],
-        control_field: 'addMode',
-        control_value: 'oneTop|oneBottom',
-        control_use_regex: 'true'
-    },
-    {
-        name : 'runPostProcessing',
-        label : '@@form.subformRepeater.runPostProcessing@@',
-        type : 'checkbox',
-        value : '',
-        options : [{
-            value : 'true',
-            label : ''
-        }],
-        control_field: 'addMode',
-        control_value: 'oneTop|oneBottom',
-        control_use_regex: 'true'
+        "title": "@@form.formgrid.validationAndData@@",
+        "properties": [
+            {
+                "label": "@@form.formgrid.validation@@",
+                "type": "header"
+            },
+            {
+                "name": "validator",
+                "label": "@@form.formgrid.validator@@",
+                "type": "elementselect",
+                "options_ajax": "[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormMultiRowValidator",
+                "url": "[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions"
+            },
+            {
+                "name": "uniqueKey",
+                "label": "@@form.formgrid.uniqueKey@@",
+                "description": "@@form.formgrid.uniqueKey.desc@@",
+                "type": "selectbox",
+                "options_ajax_on_change": "formDefId",
+                "options_ajax": "[CONTEXT_PATH]/web/json/console/app[APP_PATH]/form/columns/options"
+            },
+            {
+                "name": "validateMinRow",
+                "label": "@@form.formgrid.validateMinRow@@",
+                "type": "textfield"
+            },
+            {
+                "name": "validateMaxRow",
+                "label": "@@form.formgrid.validateMaxRow@@",
+                "type": "textfield"
+            },
+            {
+                "name": "errorMessage",
+                "label": "@@form.formgrid.errorMessage@@",
+                "type": "textfield",
+                "value": "@@form.formgrid.invalidNumberOfRow@@"
+            },
+            {
+                "label": "@@form.formgrid.dataBinder@@",
+                "type": "header"
+            },
+            {
+                "name": "loadBinder",
+                "label": "@@form.formgrid.loadBinder@@",
+                "type": "elementselect",
+                "options_ajax": "[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormLoadMultiRowElementBinder",
+                "url": "[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions"
+            },
+            {
+                "name": "storeBinder",
+                "label": "@@form.formgrid.storeBinder@@",
+                "type": "elementselect",
+                "options_ajax": "[CONTEXT_PATH]/web/property/json/getElements?classname=org.joget.apps.form.model.FormStoreMultiRowElementBinder",
+                "url": "[CONTEXT_PATH]/web/property/json[APP_PATH]/getPropertyOptions"
+            },
+            {
+                "label": "@@form.subformRepeater.defaultAddFormAdvanced@@",
+                "type": "header",
+                "description": "@@form.subformRepeater.defaultAddFormAdvanced.desc@@",
+                "control_field": "addMode",
+                "control_value": "oneTop|oneBottom",
+                "control_use_regex": "true"
+            },
+            {
+                "name": "setWorkflowVariable",
+                "label": "@@form.subformRepeater.setWorkflowVariable@@",
+                "type": "checkbox",
+                "value": "",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ],
+                "control_field": "addMode",
+                "control_value": "oneTop|oneBottom",
+                "control_use_regex": "true"
+            },
+            {
+                "name": "runPostProcessing",
+                "label": "@@form.subformRepeater.runPostProcessing@@",
+                "type": "checkbox",
+                "value": "",
+                "options": [
+                    {
+                        "value": "true",
+                        "label": ""
+                    }
+                ],
+                "control_field": "addMode",
+                "control_value": "oneTop|oneBottom",
+                "control_use_regex": "true"
+            }
+        ]
     }
-    ]
-}]
+]
