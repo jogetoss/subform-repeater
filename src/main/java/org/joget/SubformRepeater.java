@@ -60,7 +60,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "7.0.9";
+        return "7.0.10";
     }
 
     @Override
@@ -321,7 +321,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 loadOptionBinders(formDefId, form, form, tempFormData);
                 
                 // recursively update parameter names for child elements
-                String parentId = uniqueValue + "_" + FormUtil.getElementParameterName(this);
+                String parentId = FormUtil.getElementParameterName(this) + "_" + uniqueValue;
                 updateElement(form, parentId, readonly);
             } catch (Exception e) {
                 LogUtil.error(AbstractSubForm.class.getName(), e, null);
