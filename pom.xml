@@ -6,21 +6,24 @@
     <packaging>bundle</packaging>
     <version>7.0.10</version>
     <name>subform_repeater</name>
-    <url>http://www.joget.org</url>
+    <url>https://www.joget.org</url>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <release>11</release>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.2.5</version>
                 <configuration>
                     <skipTests>false</skipTests>
                 </configuration>
@@ -40,8 +43,8 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.9</version>
                 <extensions>true</extensions>
-                <version>5.1.8</version>
                 <configuration>
                     <instructions>
                         <!-- Change package and plugin class here -->
@@ -90,11 +93,11 @@
     <distributionManagement>
         <repository>
             <id>internal</id>
-            <url>http://dev.joget.org/archiva/repository/internal</url>
+            <url>https://dev.joget.org/archiva/repository/internal</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://dev.joget.org/archiva/repository/snapshots</url>
+            <url>https://dev.joget.org/archiva/repository/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
