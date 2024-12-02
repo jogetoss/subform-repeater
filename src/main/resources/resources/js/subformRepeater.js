@@ -109,7 +109,7 @@
     
     function attachButtonEffect() {
         setTimeout(function () {
-            Waves.attach(".btn:not(.waves-button), .form-button:not(.waves-button), button:not(.waves-button), input[type=button]:not(.waves-button), input[type=reset]:not(.waves-button), input[type=submit]:not(.waves-button)", [
+            Waves.attach(".subform_repeater .btn:not(.waves-button), .subform_repeater .form-button:not(.waves-button), .subform_repeater button:not(.waves-button), .subform_repeater input[type=button]:not(.waves-button), .subform_repeater input[type=reset]:not(.waves-button), .subform_repeater input[type=submit]:not(.waves-button)", [
                 "btn",
                 "waves-button",
                 "waves-float",
