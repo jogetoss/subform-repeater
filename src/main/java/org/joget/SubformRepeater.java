@@ -42,7 +42,7 @@ import org.joget.workflow.model.service.WorkflowManager;
 import org.joget.workflow.util.WorkflowUtil;
 
 public class SubformRepeater extends Grid implements PluginWebSupport {
-    
+
     private final static String MESSAGE_PATH = "message/form/SubformRepeater";
     private Map<FormData, FormRowSet> cachedRowSet = new HashMap<FormData, FormRowSet>();
     private FormData formData;
@@ -51,7 +51,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
     private Map<String, FormRow> existing = new HashMap<String, FormRow>();
     private Map<String, Form> forms = new HashMap<String, Form>();
     private Map<String, FormDefinition> formDefs = new HashMap<String, FormDefinition>();
-    
+
     @Override
     public String getName() {
         return "Subform Repeater";
@@ -59,7 +59,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "8.0.0";
+        return "8.0.1";
     }
 
     @Override
@@ -78,17 +78,17 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         //support i18n
         return AppPluginUtil.getMessage("org.joget.SubformRepeater.pluginDesc", getClassName(), MESSAGE_PATH);
     }
-    
+
     @Override
     public String getPropertyOptions() {
         return AppUtil.readPluginResource(getClass().getName(), "/properties/subformRepeater.json", null, true, MESSAGE_PATH);
     }
-    
+
     @Override
     public String getFormBuilderTemplate() {
         return "<label class='label'>"+getLabel()+"</label>";
     }
-    
+
     @Override
     public void setStoreBinder(FormStoreBinder storeBinder) {
         if (storeBinder != null) {
@@ -97,18 +97,18 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             super.setStoreBinder(null);
         }
     }
-    
+
     @Override
     public String renderTemplate(FormData formData, Map dataModel) {
         String template = "subformRepeater.ftl";
-        
+
         this.formData = formData;
 
         // set validator decoration
         String decoration = FormUtil.getElementValidatorDecoration(this, formData);
         dataModel.put("decoration", decoration);
         dataModel.put("customDecorator", getDecorator());
-        
+
         // set rows
         FormRowSet rows = getRows(formData);
         dataModel.put("rows", rows);
@@ -116,7 +116,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         String html = FormUtil.generateElementHtml(this, formData, template, dataModel);
         return html;
     }
-    
+
     /**
      * Return the grid data
      * @param formData
@@ -125,13 +125,13 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
     @Override
     protected FormRowSet getRows(FormData formData) {
         this.formData = formData;
-        
+
         if (!cachedRowSet.containsKey(formData)) {
             String id = getPropertyString(FormUtil.PROPERTY_ID);
             String param = FormUtil.getElementParameterName(this);
             FormRowSet rowSet = new FormRowSet();
             rowSet.setMultiRow(true);
-            
+
             if (!FormUtil.isReadonly(this, formData) && FormUtil.isFormSubmitted(this, formData)) {
                 String position = formData.getRequestParameter(param + "_position");
                 if (position != null) {
@@ -165,8 +165,8 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             cachedRowSet.put(formData, rowSet);
         }
         return cachedRowSet.get(formData);
-        }
-    
+    }
+
     protected FormRow getSubmittedData(String uv, String prefix, String paramName, FormRow rowData, FormData formData) {
         FormData rowFormData = new FormData();
         for (String key : formData.getRequestParams().keySet()) {
@@ -174,10 +174,10 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 rowFormData.addRequestParameterValues(key, formData.getRequestParameterValues(key));
             }
         }
-        
+
         Form form = getEditableForm(uv);
         setOptionBinderData(form.getPropertyString(FormUtil.PROPERTY_ID), form, form, rowFormData);
-        
+
         //set laod bidner data
         if (rowData != null) {
             FormLoadBinder loadBinder = form.getLoadBinder();
@@ -185,23 +185,23 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             rowSet.add(rowData);
             rowFormData.setLoadBinderData(loadBinder, rowSet);
         }
-        FormUtil.executeElementFormatDataForValidation(form, rowFormData);        
+        FormUtil.executeElementFormatDataForValidation(form, rowFormData);
         FormUtil.executeElementFormatData(form, rowFormData);
         formDatas.put(uv, rowFormData);
-        
+
         FormStoreBinder storeBinder = form.getStoreBinder();
         FormRowSet submitedRows = rowFormData.getStoreBinderData(storeBinder);
-        
+
         if (submitedRows != null && !submitedRows.isEmpty()) {
             return submitedRows.get(0);
         } else {
             return new FormRow();
         }
     }
-    
+
     protected FormRowSet getBinderData(String id, boolean sort) {
         FormRowSet rowSet = null;
-        
+
         // read from 'value' property
         String json = getPropertyString(FormUtil.PROPERTY_VALUE);
         try {
@@ -248,14 +248,14 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 }
             });
         }
-        
+
         for (FormRow r : rowSet) {
             existing.put(r.getId(), r);
         }
-        
+
         return rowSet;
     }
-    
+
     protected Form getEditableForm(String uniqueValue) {
         Form editableForm = forms.get(uniqueValue);
         if (editableForm == null) {
@@ -264,7 +264,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
         return editableForm;
     }
-    
+
     protected Form getReadonlyForm(String uniqueValue) {
         Form readonlyForm = forms.get(uniqueValue);
         if (readonlyForm == null) {
@@ -277,13 +277,13 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
         return readonlyForm;
     }
-    
+
     protected Form createForm(String uniqueValue, String formDefId, boolean readonly) {
         Form form = null;
         AppDefinition appDef = AppUtil.getCurrentAppDefinition();
         FormService formService = (FormService) FormUtil.getApplicationContext().getBean("formService");
         FormDefinitionDao formDefinitionDao = (FormDefinitionDao) FormUtil.getApplicationContext().getBean("formDefinitionDao");
-        
+
         FormDefinition formDef = formDefs.get(formDefId);
         if (formDef == null) {
             formDef = formDefinitionDao.loadById(formDefId, appDef);
@@ -296,15 +296,15 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 formData.setProcessId(this.formData.getProcessId());
                 WorkflowManager wm = (WorkflowManager) AppUtil.getApplicationContext().getBean("workflowManager");
                 wfAssignment = wm.getAssignmentByProcess(this.formData.getProcessId());
-                
+
             }
             json = AppUtil.processHashVariable(json, wfAssignment, StringUtil.TYPE_JSON, null);
-            
+
             // use the json definition to create the subform
             try {
                 form = (Form) formService.createElementFromJson(json);
                 form.setParent(this);
-                
+
                 //if id field not exist, automatically add an id hidden field
                 Element idElement = FormUtil.findElement(FormUtil.PROPERTY_ID, form, formData);
                 if (idElement == null) {
@@ -314,11 +314,11 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     idElement.setParent(form);
                     subFormElements.add(idElement);
                 }
-                
+
                 
                 FormData tempFormData = new FormData();
                 loadOptionBinders(formDefId, form, form, tempFormData);
-                
+
                 // recursively update parameter names for child elements
                 String parentId = FormUtil.getElementParameterName(this) + "_" + uniqueValue;
                 updateElement(form, parentId, readonly);
@@ -326,10 +326,10 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 LogUtil.error(AbstractSubForm.class.getName(), e, null);
             }
         }
-        
+
         return form;
     }
-    
+
     protected void updateElement(Element element, String prefix, boolean readonly) {
         if (prefix == null) {
             prefix = "";
@@ -340,7 +340,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             }
             element.setCustomParameterName(paramName);
         }
-            
+
         if (element.getParent() != this && (element instanceof Form || element instanceof AbstractSubForm)) {
             String formId = element.getPropertyString(FormUtil.PROPERTY_ID);
             if (formId == null) {
@@ -361,7 +361,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             updateElement(child, prefix, readonly);
         }
     }
-    
+
     protected void setOptionBinderData(String formDefId, Form form, Element element, FormData formData) {
         Map<String, FormRowSet> dataSet = optionBinderData.get(formDefId);
         if (dataSet != null && !dataSet.isEmpty()) {
@@ -369,9 +369,9 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             if (binder != null && !FormUtil.isAjaxOptionsSupported(element, formData)) {
                 String key = element.getPropertyString(FormUtil.PROPERTY_ID);
                 if (element.getParent() != null) {
-                    key = element.getParent().getPropertyString(FormUtil.PROPERTY_ID) + "_" + key; 
+                    key = element.getParent().getPropertyString(FormUtil.PROPERTY_ID) + "_" + key;
                 }
-                
+
                 FormRowSet rows = dataSet.get(key);
                 if (rows != null) {
                     formData.setOptionsBinderData(binder, rows);
@@ -385,7 +385,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             }
         }
     }
-    
+
     public void loadOptionBinders(String formDefId, Form form, Element element, FormData formData) {
         FormLoadBinder binder = (FormLoadBinder) element.getOptionsBinder();
         if (binder != null && !FormUtil.isAjaxOptionsSupported(element, formData)) {
@@ -397,12 +397,12 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     dataSet = new HashMap<String, FormRowSet>();
                     optionBinderData.put(formDefId, dataSet);
                 }
-                
+
                 String key = element.getPropertyString(FormUtil.PROPERTY_ID);
                 if (element.getParent() != null) {
-                    key = element.getParent().getPropertyString(FormUtil.PROPERTY_ID) + "_" + key; 
+                    key = element.getParent().getPropertyString(FormUtil.PROPERTY_ID) + "_" + key;
                 }
-                
+
                 dataSet.put(key, data);
             }
         }
@@ -413,32 +413,32 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             }
         }
     }
-    
+
     public String getRowTemplate(Map rowMap, String elementParamName, String mode) {
         FormRow row = null;
         if (rowMap != null) {
             row = new FormRow();
             row.putAll(rowMap);
         }
-        
-        String uniqueValue = "uv" + UuidGenerator.getInstance().getUuid();
-        
+
+        String uniqueValue = "uv" + UuidGenerator.getInstance().getUuid().replaceAll("-", "");
+
         if (row != null && row.getProperty("RS_UNIQUE_VALUE") != null) {
             uniqueValue = row.getProperty("RS_UNIQUE_VALUE");
         } else if ("oneTop".equals(mode) || "oneBottom".equals(mode)) {
             uniqueValue = mode;
         }
-        
+
         //skip the form on top or bottom to be render in table body
         if (("oneTop".equals(uniqueValue) && !"oneTop".equals(mode)) || ("oneBottom".equals(uniqueValue) && !"oneBottom".equals(mode))) {
             return "";
         }
-        
+
         String rId = null;
         if (row != null && row.getId() != null) {
             rId = row.getId();
         }
-        
+
         Form form = null;
         String readonlyCss = "";
         if (FormUtil.isReadonly(this, formData) || ("disable".equals(getPropertyString("editMode")) && rId != null && !rId.isEmpty() && existing.containsKey(rId))) {
@@ -447,17 +447,17 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         } else {
             form = getEditableForm(uniqueValue);
         }
-        
+
         if (form == null) {
             return "";
         }
-        
+
         String cssClass = "grid-row " + mode;
         if (row == null || row.getId() == null) {
             cssClass += " new";
         }
         String html = "<tr class=\""+cssClass+"\">";
-        
+
         if (!FormUtil.isReadonly(this, formData) && getPropertyString("enableSorting") != null && getPropertyString("enableSorting").equals("true") && getPropertyString("sortField") != null && !getPropertyString("sortField").isEmpty()) {
             if (("oneTop".equals(getPropertyString("addMode")) || "oneBottom".equals(getPropertyString("addMode"))) && "disable".equals(getPropertyString("editMode"))) {
                 //ignore
@@ -469,7 +469,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
         html += "<td class=\"subform_wrapper\">";
         html += "<input type=\"hidden\" class=\"unique_value\" name=\""+elementParamName+"_unique_value\" value=\""+uniqueValue+"\" />";
-        
+
         FormData rowFormData = formDatas.get(uniqueValue);
         if (rowFormData == null) {
             rowFormData = new FormData();
@@ -482,7 +482,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 rowFormData.setLoadBinderData(loadBinder, rowSet);
             }
         }
-        
+
         //load data for child
         rowFormData.setPrimaryKeyValue(rId);
         Collection<Element> children = form.getChildren(rowFormData);
@@ -491,23 +491,23 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 FormUtil.executeLoadBinders(child, rowFormData);
             }
         }
-        
+
         //get form template 
         html += "<div class=\"subform-container no-frame"+readonlyCss+"\">";
-        
+
         String formHtml = form.render(rowFormData, false);
         formHtml = formHtml.replaceAll("\"form-section", "\"subform-section");
         formHtml = formHtml.replaceAll("\"form-column", "\"subform-column");
         formHtml = formHtml.replaceAll("\"form-cell", "\"subform-cell");
-        
+
         //Fix form Hash Variable not working
         if (rId != null && !rId.isEmpty() && formHtml.contains("{recordId}")) {
             formHtml = formHtml.replaceAll(StringUtil.escapeRegex("{recordId}"), rId);
             formHtml = AppUtil.processHashVariable(formHtml, null, null, null);
         }
-        
+
         html += formHtml;
-        
+
         html += "</div>";
         html += "</td>";
         if ("enable".equals(getPropertyString("deleteMode")) || "enable".equals(getPropertyString("addMode")) || "true".equals(getPropertyString("collapsible"))) {
@@ -522,21 +522,21 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 if (readonlyCss.isEmpty() && "enable".equals(getPropertyString("deleteMode"))) {
                     html += "<a class=\"repeater-action-delete\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
                 }
-                
+
             }
             html += "</td>";
         }
         html += "</tr>";
-        
+
         return html;
     }
-    
+
     @Override
     public Boolean selfValidate(FormData formData) {
         this.formData = formData;
         Boolean valid = super.selfValidate(formData);
         String id = FormUtil.getElementParameterName(this);
-        
+
         //run validation for all editable row
         boolean rowsValid = true;
         FormRowSet rowSet = getRows(formData);
@@ -547,7 +547,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             if (rowFormData != null) {
                 Form form = getEditableForm(uv);
                 FormUtil.executeValidators(form, rowFormData);
-                
+
                 if (form.hasError(rowFormData)) {
                     rowsValid = false;
                 }
@@ -559,7 +559,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             formData.addFormError(id, errorMsg);
         }
 
-         String uniqueKey = getPropertyString("uniqueKey");
+        String uniqueKey = getPropertyString("uniqueKey");
         if (uniqueKey != null && !uniqueKey.isEmpty()) {
             Set<String> values = new HashSet<String>();
             for (FormRow r : rowSet) {
@@ -573,16 +573,16 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 }
             }
         }
-        
+
         return valid;
     }
-    
+
     protected String getDecorator() {
         String decorator = "";
-        
+
         try {
             String min = getPropertyString("validateMinRow");
-            
+
             if ((min != null && !min.isEmpty())) {
                 int minNumber = Integer.parseInt(min);
                 if (minNumber > 0) {
@@ -590,14 +590,14 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 }
             }
         } catch (Exception e) {}
-        
+
         return decorator;
     }
-    
+
     @Override
     public FormRowSet formatData(FormData formData) {
         this.formData = formData;
-        
+
         // get form rowset
         FormRowSet rowSet = getRows(formData);
         rowSet.setMultiRow(true);
@@ -610,7 +610,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     String sortField = getPropertyString("sortField");
                     r.setProperty(sortField, Integer.toString(count));
                 }
-                
+
                 count++;
             }
         } catch (Exception ex) {
@@ -619,24 +619,24 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
         return rowSet;
     }
-    
+
     public void storeInnerData(FormRowSet rows) {
         FormService formService = (FormService) AppUtil.getApplicationContext().getBean("formService");
-        
+
         for (FormRow r : rows) {
             //if have formData mean it is editable
             String uv = r.getProperty("RS_UNIQUE_VALUE");
             FormData rowFormData = formDatas.get(uv);
             if (rowFormData != null && rowFormData.getStoreBinders().size() > 1) {
                 Form form = getEditableForm(uv);
-                
+
                 if (rowFormData.getPrimaryKeyValue() == null || rowFormData.getPrimaryKeyValue().isEmpty()) {
                     if (r.getId() == null || r.getId().isEmpty()) {
                         r.setId(UuidGenerator.getInstance().getUuid());
                     }
                     rowFormData.setPrimaryKeyValue(r.getId());
                 }
-                
+
                 //skip the form elemnt and start with its child
                 for (Element e : form.getChildren()) {
                     formService.recursiveExecuteFormStoreBinders(form, e, rowFormData);
@@ -646,7 +646,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             r.remove("RS_UNIQUE_VALUE");
         }
     }
-    
+
     public void executeFormActionForDefaultAddForm(FormData formData) {
         if ("oneTop".equals(getPropertyString("addMode")) || "oneBottom".equals(getPropertyString("addMode"))) {
             if ("true".equals(getPropertyString("setWorkflowVariable")) || "true".equals(getPropertyString("runPostProcessing"))) {
@@ -657,13 +657,13 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 FormRow submitedRow = submitedRows.get(0);
                 String id = submitedRow.getId();
                 rowFormData.setPrimaryKeyValue(id);
-                        
+
                 //set workflow variable
                 if ("true".equals(getPropertyString("setWorkflowVariable"))) {
                     String activityId = formData.getActivityId();
                     String processId = formData.getProcessId();
                     if (activityId != null || processId != null) {
-                        
+
                         
                         Map<String, String> variableMap = new HashMap<String, String>();
                         variableMap = storeWorkflowVariables(getEditableForm(getPropertyString("addMode")), submitedRow, variableMap);
@@ -686,7 +686,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             }
         }
     }
-    
+
     protected Map<String, String> storeWorkflowVariables(Element element, FormRow row, Map<String, String> variableMap) {
         String variableName = element.getPropertyString(AppUtil.PROPERTY_WORKFLOW_VARIABLE);
         if (variableName != null && !variableName.trim().isEmpty()) {
@@ -702,7 +702,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
         return variableMap;
     }
-    
+
     public String getServiceUrl() {
         if ("enable".equals(getPropertyString("addMode"))) {
             String url = WorkflowUtil.getHttpServletRequest().getContextPath()+ "/web/json/plugin/org.joget.SubformRepeater/service";
@@ -726,31 +726,31 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             return "";
         }
     }
-    
+
     public void webService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nonce = request.getParameter("_nonce");
         String paramName = request.getParameter("_paramName");
         String appId = request.getParameter("_appId");
         String appVersion = request.getParameter("_appVersion");
-        
+
         if (SecurityUtil.verifyNonce(nonce, new String[]{"SubformRepeater", appId, appVersion, paramName})) {
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 try {
                     AppService appService = (AppService) AppUtil.getApplicationContext().getBean("appService");
                     AppDefinition appDef = appService.getAppDefinition(appId, appVersion);
-        
+
                     setProperty("enableSorting", request.getParameter("_enableSorting"));
                     setProperty("sortField", request.getParameter("_sortField"));
                     setProperty("formDefId", request.getParameter("_formDefId"));
                     setProperty("deleteMode", request.getParameter("_deleteMode"));
                     setProperty("addMode", request.getParameter("_addMode"));
                     setProperty("collapsible", request.getParameter("_collapsible"));
-                    
+
                     setCustomParameterName(paramName);
-                    
+
                     this.formData = new FormData();
                     this.formData.setProcessId(request.getParameter("_processId"));
-                    
+
                     String template = getRowTemplate(null, paramName, "normal");
                     if (template != null && !template.isEmpty()) {
                         //return html
