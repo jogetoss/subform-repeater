@@ -59,7 +59,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "8.0.1";
+        return "8.0.2";
     }
 
     @Override
@@ -507,25 +507,70 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
 
         html += formHtml;
-
+        
+        // html += "</div>";
+        // html += "</td>";
+        // if ("enable".equals(getPropertyString("deleteMode")) || "enable".equals(getPropertyString("addMode")) || "true".equals(getPropertyString("collapsible"))) {
+        //     html += "<td class=\"repeater-action\">";
+        //     if (!("oneTop".equals(mode) || "oneBottom".equals(mode))) {
+        //         if (!FormUtil.isReadonly(this, formData) && "enable".equals(getPropertyString("addMode"))) {
+        //             html += "<a class=\"repeater-action-add add-row-before\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
+        //         }
+        //         if ("true".equals(getPropertyString("collapsible"))) {
+        //             html += "<a class=\"repeater-collapsible\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
+        //         }
+        //         if (readonlyCss.isEmpty() && "enable".equals(getPropertyString("deleteMode"))) {
+        //             html += "<a class=\"repeater-action-delete\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
+        //         }
+                
+        //     }
+        //     html += "</td>";
+        // }
         html += "</div>";
         html += "</td>";
-        if ("enable".equals(getPropertyString("deleteMode")) || "enable".equals(getPropertyString("addMode")) || "true".equals(getPropertyString("collapsible"))) {
+        
+        if ("enable".equals(getPropertyString("deleteMode")) 
+            || "enable".equals(getPropertyString("addMode")) 
+            || "true".equals(getPropertyString("collapsible"))) {
+        
             html += "<td class=\"repeater-action\">";
+ 
+  
+        
             if (!("oneTop".equals(mode) || "oneBottom".equals(mode))) {
+                html += "<div class=\"dropdown\">";
+                html += "<button class=\"dropdown-toggle\" title=\"More Actions\"><i class=\"fas fa-ellipsis-v\"></i></button>";    
+                html += "<div class=\"dropdown-menu\">";
                 if (!FormUtil.isReadonly(this, formData) && "enable".equals(getPropertyString("addMode"))) {
-                    html += "<a class=\"repeater-action-add add-row-before\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
+                    html += "<a class=\"repeater-action-add add-row-before btn btn-sm btn-primary\" title=\""
+                        + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)
+                        + "\">"
+                        + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)
+                        + "</a>";
                 }
                 if ("true".equals(getPropertyString("collapsible"))) {
-                    html += "<a class=\"repeater-collapsible\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
+                    html += "<a class=\"repeater-collapsible btn btn-sm btn-primary\" title=\""
+                        + AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)
+                        + "\">"
+                        + AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)
+                        + "</a>";
                 }
                 if (readonlyCss.isEmpty() && "enable".equals(getPropertyString("deleteMode"))) {
-                    html += "<a class=\"repeater-action-delete\" title=\""+AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)+"\"><span></span></a>";
+                    html += "<a class=\"repeater-action-delete btn btn-sm btn-primary\" title=\""
+                        + AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)
+                        + "\">"
+                        + AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)
+                        + "</a>";
                 }
-
+                html += "</div>";
+                html += "</div>";
             }
+        
+
+
             html += "</td>";
         }
+        
         html += "</tr>";
 
         return html;

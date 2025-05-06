@@ -41,24 +41,6 @@
     margin: 5px;
 }
 
-.subform_repeater .repeater-action {
-    position: relative;
-    vertical-align: middle;
-    padding: 9px 0;
-}
-
-.subform_repeater .repeater-action a {
-    display: block;
-    height: 18px;
-    width: 18px;
-    margin: 4px auto;
-    border-radius: 9px;
-    border: solid 1px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-    text-decoration: none;
-    background: #fff;
-}
-
 .subform_repeater .order {
     vertical-align: top; 
     cursor: move;
@@ -72,17 +54,6 @@
 .subform_repeater .repeater-action{
     text-align: center;
     width:20px;
-}
-
-.subform_repeater .repeater-action-add {
-    position: absolute;
-    top: -13px;
-}
-
-.subform_repeater .repeater-action a.repeater-action-delete{
-    background: #FAD2DB;
-    border: solid 1px #FAD2DB;
-    box-shadow: 0 0 3px #FF0339;
 }
 
 .subform_repeater .subform_repeater_action button span:before,
@@ -133,4 +104,49 @@
 .subform_repeater .ui-sortable-helper {
     display: block;
     background: #ddd;
+}
+
+.form-cell table:not([class]) td, .form-cell table:not([class]) th, .subform-cell table:not([class]) td, .subform-cell table:not([class]) th {
+    border: none;
+}
+
+.repeater-action .dropdown-toggle {
+    background: none !important;
+    border: none !important;
+    font-size: 18px !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    color: #666 !important;
+    transition: color 0.2s !important;
+}
+
+.subform_wrapper .subform-container {
+    border-left: 3px solid var(--theme-color5, #72777a) !important;
+    margin: 0.5em 0 !important;
+}
+
+.repeater-action .dropdown-menu {
+    min-width: 100px;
+}
+
+.repeater-action .dropdown-menu a {
+    display: block;
+    font-size: 14px;
+    color: rgb(33, 37, 41) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    text-align: left;
+    padding: 0.25rem 1.5rem;
+}
+
+.subform_repeater .repeater-action a {
+    height: auto !important;
+    width: auto !important;
+    cursor: pointer;
+    border-radius: 0 !important;
+}
+
+.repeater-action .dropdown-toggle::after {
+    content: none !important;
+    display: none !important;
 }

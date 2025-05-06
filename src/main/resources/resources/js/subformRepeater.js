@@ -82,7 +82,7 @@
     
     function initRow(row, o) {
         if(o.readonly === undefined || o.readonly !== 'true'){
-            $(row).find("> td > a.repeater-action-delete").click(function(){
+            $(row).find("a.repeater-action-delete").click(function(){
                 if (confirm(o.messages['deleteRow'])) {
                     var target = $(row).closest(".subform_repeater_container");
                     $(row).remove();
@@ -90,14 +90,14 @@
                 }
             });
             
-            $(row).find("> td > a.repeater-action-add").click(function(){
+            $(row).find("a.repeater-action-add").click(function(){
                 addRow(o, row, "row");
             });
             
             updatePositionIndex($(row).closest(".subform_repeater_container"), o);
         }
         
-        $(row).find("> td > a.repeater-collapsible").click(function(){
+        $(row).find("a.repeater-collapsible").click(function(){
             if ($(row).hasClass("collapsed-row")) {
                 expandRow(row, o);
             } else {
@@ -151,8 +151,7 @@
         $(row).addClass("collapsed-row");
         $(row).find("> td > a.repeater-collapsible").attr("title", o.messages['expand']);
         var form = $(row).find("> td > .subform-container");
-        var firstField = $(form).find(".subform-cell");
-        var height = $(firstField).height() + 8;
+        var height = 45;
         form.css("height", height + "px");
         form.css("overflow", "hidden");
     }
@@ -164,4 +163,25 @@
         form.css("height", "auto");
         form.css("overflow", "visible");
     }
+
+  
+    // Trigger dropdown when more actions button is clicked
+    $(document).off("click.dropdownToggle");
+    $(document).off("click.dropdownOutside");
+
+    $(document).on("click.dropdownToggle", ".repeater-action .dropdown-toggle", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        const $dropdown = $(this).closest(".dropdown");
+        const $menu = $dropdown.find(".dropdown-menu");
+    
+        $(".dropdown-menu.show").not($menu).removeClass("show");
+    
+        $menu.toggleClass("show");
+    });
+
+    $(document).on("click", function () {
+        $(".dropdown-menu.show").removeClass("show");
+    });
 })(jQuery);
