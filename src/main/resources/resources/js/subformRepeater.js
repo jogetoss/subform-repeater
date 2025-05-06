@@ -128,11 +128,16 @@
     }
     
     function addRow(o, target, mode) {
+        var spinner = $("<i class='loading-spinner icon-spinner icon-spin icon-2x fas fa-spinner fa-spin fa-2x'></i>");
+        
+        $(target).append(spinner);
+    
         $.ajax({
             type: "POST",
-            dataType : "text",
+            dataType: "text",
             url: o.url,
             success: function(response) {
+                spinner.remove();
                 var newRow = $(response);
                 
                 if (mode === "list") {
@@ -143,6 +148,10 @@
                     $(target).before(newRow);
                     initRow(newRow, o);
                 }
+            },
+            error: function() {
+                spinner.remove();
+                alert("Error adding row.");
             }
         });
     }
