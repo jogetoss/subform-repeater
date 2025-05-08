@@ -10,7 +10,7 @@
                 
                 if (o.collapsedByDefault === "true" && o.collapsible === "true") {
                     $(target).find("> table > tbody > tr.grid-row").each(function(){
-                        if(!$(this).hasClass("collapsed-row") && $(this).find("> td > a.repeater-collapsible").length > 0) {
+                        if(!$(this).hasClass("collapsed-row") && $(this).find("a.repeater-collapsible").length > 0) {
                             collapseRow($(this), o);
                         }
                     });
@@ -158,7 +158,7 @@
     
     function collapseRow(row, o) {
         $(row).addClass("collapsed-row");
-        $(row).find("> td > a.repeater-collapsible").attr("title", o.messages['expand']);
+        $(row).find("a.repeater-collapsible").attr("title", o.messages['expand']).text(o.messages['expand']);
         var form = $(row).find("> td > .subform-container");
         var height = 45;
         form.css("height", height + "px");
@@ -167,7 +167,7 @@
     
     function expandRow(row, o) {
         $(row).removeClass("collapsed-row");
-        $(row).find("> td > a.repeater-collapsible").attr("title", o.messages['collapse']);
+        $(row).find("a.repeater-collapsible").attr("title", o.messages['collapse']).text(o.messages['collapse']);
         var form = $(row).find("> td > .subform-container");
         form.css("height", "auto");
         form.css("overflow", "visible");

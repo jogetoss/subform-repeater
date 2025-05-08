@@ -174,7 +174,17 @@
                 "control_field": "collapsible",
                 "control_value": "true",
                 "control_use_regex": "false"
-            }
+            },
+            {
+                "name":"borderColor",
+                "label":"@@form.subformRepeater.borderColor@@",
+                "type":"color"
+            },  
+            {
+                "name":"dropdownBorderColor",
+                "label":"@@form.subformRepeater.dropdownBorderColor@@",
+                "type":"color"
+             }             
         ]
     },
     {

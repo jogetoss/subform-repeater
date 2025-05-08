@@ -59,7 +59,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "8.0.2";
+        return "8.0.3";
     }
 
     @Override
@@ -493,7 +493,11 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
 
         //get form template 
-        html += "<div class=\"subform-container no-frame"+readonlyCss+"\">";
+        if(!getPropertyString("borderColor").isEmpty()){
+            html += "<div class=\"subform-container no-frame"+readonlyCss+"\"  style=\"border-left: 3px solid " + getPropertyString("borderColor") + " !important;\">";
+        } else {
+            html += "<div class=\"subform-container no-frame"+readonlyCss+"\">";
+        }
 
         String formHtml = form.render(rowFormData, false);
         formHtml = formHtml.replaceAll("\"form-section", "\"subform-section");
@@ -519,8 +523,12 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
  
             if (!("oneTop".equals(mode) || "oneBottom".equals(mode))) {
                 html += "<div class=\"dropdown\">";
-                html += "<button class=\"dropdown-toggle\" title=\"More Actions\"><i class=\"fas fa-ellipsis-v\"></i></button>";    
-                html += "<div class=\"dropdown-menu\">";
+                html += "<button class=\"dropdown-toggle\" title=\"More Actions\"><i class=\"fas fa-ellipsis-v\"></i></button>";  
+                if(!getPropertyString("dropdownBorderColor").isEmpty()) {
+                    html += "<div class=\"dropdown-menu\" style=\"border: 1px solid " + getPropertyString("dropdownBorderColor") + " !important;\">";
+                } else {
+                    html += "<div class=\"dropdown-menu\">";
+                }
                 if (!FormUtil.isReadonly(this, formData) && "enable".equals(getPropertyString("addMode"))) {
                     html += "<a class=\"repeater-action-add add-row-before btn btn-sm btn-primary\" title=\""
                         + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)

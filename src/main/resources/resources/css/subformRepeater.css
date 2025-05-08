@@ -121,12 +121,16 @@
 }
 
 .subform_wrapper .subform-container {
-    border-left: 3px solid var(--theme-color5, #72777a) !important;
+    border-left: 3px solid var(--theme-button-bg, #72777a) !important;
     margin: 0.5em 0 !important;
 }
 
 .repeater-action .dropdown-menu {
-    min-width: 100px;
+    min-width: 100px !important;
+    left: auto;
+    right: 0;
+    background-color: #FFFFFF;
+    border: 1px solid var(--theme-button-bg, #72777a);
 }
 
 .repeater-action .dropdown-menu a {
