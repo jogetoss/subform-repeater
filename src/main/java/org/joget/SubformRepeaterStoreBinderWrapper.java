@@ -9,13 +9,13 @@ import org.joget.apps.form.model.FormStoreBinder;
 public class SubformRepeaterStoreBinderWrapper extends FormBinder implements FormStoreBinder {
     private SubformRepeater subformRepeater;
     private FormStoreBinder storeBinder;
-    
+
     public String getName() {
         return "SubformRepeaterStoreBinderWrapper";
     }
 
     public String getVersion() {
-        return "7.0.9";
+        return Activator.VERSION;
     }
 
     public String getDescription() {
@@ -33,7 +33,7 @@ public class SubformRepeaterStoreBinderWrapper extends FormBinder implements For
     public String getPropertyOptions() {
         return "";
     }
-    
+
     public SubformRepeaterStoreBinderWrapper (SubformRepeater subformRepeater, FormStoreBinder storeBinder) {
         this.subformRepeater = subformRepeater;
         this.storeBinder = storeBinder;
@@ -44,16 +44,16 @@ public class SubformRepeaterStoreBinderWrapper extends FormBinder implements For
             //store inner form/grid data
             subformRepeater.storeInnerData(rows);
         }
-        
-        if (rows != null) {    
+
+        if (rows != null) {
             storeBinder.store(element, rows, formData);
         }
-        
+
         if (rows != null && !rows.isEmpty()) {
             //execute addition form action for add mode equeal to show empty form on top or bottom
             subformRepeater.executeFormActionForDefaultAddForm(formData);
         }
-        
+
         return rows;
     }
 }

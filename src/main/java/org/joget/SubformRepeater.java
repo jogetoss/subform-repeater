@@ -59,7 +59,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getVersion() {
-        return "8.0.3";
+        return Activator.VERSION;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     @Override
     public String getFormBuilderTemplate() {
-        return "<label class='label'>"+getLabel()+"</label>";
+        return "<label class='label'>" + getLabel() + "</label>";
     }
 
     @Override
@@ -119,6 +119,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     /**
      * Return the grid data
+     *
      * @param formData
      * @return A FormRowSet containing the grid cell data.
      */
@@ -414,6 +415,20 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
     }
 
+    private boolean hasParamsForUnique(HttpServletRequest req, String uniqueValue) {
+        if (req == null) {
+            return false;
+        }
+
+        for (Object keyObj : req.getParameterMap().keySet()) {
+            String k = String.valueOf(keyObj);
+            if (k.startsWith(uniqueValue) || k.contains("_" + uniqueValue + "_")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getRowTemplate(Map rowMap, String elementParamName, String mode) {
         FormRow row = null;
         if (rowMap != null) {
@@ -456,34 +471,66 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         if (row == null || row.getId() == null) {
             cssClass += " new";
         }
-        String html = "<tr class=\""+cssClass+"\">";
+        String html = "<tr class=\"" + cssClass + "\">";
 
         if (!FormUtil.isReadonly(this, formData) && getPropertyString("enableSorting") != null && getPropertyString("enableSorting").equals("true") && getPropertyString("sortField") != null && !getPropertyString("sortField").isEmpty()) {
             if (("oneTop".equals(getPropertyString("addMode")) || "oneBottom".equals(getPropertyString("addMode"))) && "disable".equals(getPropertyString("editMode"))) {
                 //ignore
             } else if (!("oneTop".equals(mode) || "oneBottom".equals(mode))) {
-                html += "<td class=\"order\"><a title=\""+AppPluginUtil.getMessage("form.subformRepeater.sort", getClassName(), MESSAGE_PATH)+"\"><span ></span></a></td>";
+                html += "<td class=\"order\"><a title=\"" + AppPluginUtil.getMessage("form.subformRepeater.sort", getClassName(), MESSAGE_PATH) + "\"><span ></span></a></td>";
             } else {
                 html += "<td></td>";
             }
         }
         html += "<td class=\"subform_wrapper\">";
-        html += "<input type=\"hidden\" class=\"unique_value\" name=\""+elementParamName+"_unique_value\" value=\""+uniqueValue+"\" />";
+        html += "<input type=\"hidden\" class=\"unique_value\" name=\"" + elementParamName + "_unique_value\" value=\"" + uniqueValue + "\" />";
 
-        FormData rowFormData = formDatas.get(uniqueValue);
-        if (rowFormData == null) {
+        FormData rowFormData;
+        HttpServletRequest req = WorkflowUtil.getHttpServletRequest();
+        boolean hasParams = hasParamsForUnique(req, uniqueValue);
+
+        if (hasParams) {
             rowFormData = new FormData();
+
+            Map<String, String[]> pMap = req.getParameterMap();
+
+            for (Map.Entry<String, String[]> e : pMap.entrySet()) {
+                String k = e.getKey();
+                if (k.startsWith(uniqueValue) || k.contains("_" + uniqueValue + "_")) {
+                    rowFormData.addRequestParameterValues(k, e.getValue());
+                }
+            }
+
             setOptionBinderData(form.getPropertyString(FormUtil.PROPERTY_ID), form, form, rowFormData);
-            if (row != null) {
-                //set laod bidner data
-                FormLoadBinder loadBinder = form.getLoadBinder();
-                FormRowSet rowSet = new FormRowSet();
-                rowSet.add(row);
-                rowFormData.setLoadBinderData(loadBinder, rowSet);
+
+            FormLoadBinder loadBinder = form.getLoadBinder();
+            if (loadBinder != null && rId != null && !rId.isEmpty()) {
+                FormRowSet freshRowSet = loadBinder.load(form, rId, rowFormData);
+                if (freshRowSet != null) {
+                    rowFormData.setLoadBinderData(loadBinder, freshRowSet);
+                }
+            }
+
+        } else {
+            rowFormData = formDatas.get(uniqueValue);
+            if (rowFormData == null) {
+                rowFormData = new FormData();
+                setOptionBinderData(form.getPropertyString(FormUtil.PROPERTY_ID), form, form, rowFormData);
+
+                if (row != null) {
+                    //set laod bidner data
+                    FormLoadBinder loadBinder = form.getLoadBinder();
+                    if (loadBinder != null) {
+                        FormRowSet rowSet = new FormRowSet();
+                        rowSet.add(row);
+                        rowFormData.setLoadBinderData(loadBinder, rowSet);
+                    }
+                }
             }
         }
 
-        //load data for child
+        formDatas.put(uniqueValue, rowFormData);
+
         rowFormData.setPrimaryKeyValue(rId);
         Collection<Element> children = form.getChildren(rowFormData);
         if (children != null) {
@@ -493,10 +540,10 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         }
 
         //get form template 
-        if(!getPropertyString("borderColor").isEmpty()){
-            html += "<div class=\"subform-container no-frame"+readonlyCss+"\"  style=\"border-left: 3px solid " + getPropertyString("borderColor") + " !important;\">";
+        if (!getPropertyString("borderColor").isEmpty()) {
+            html += "<div class=\"subform-container no-frame" + readonlyCss + "\"  style=\"border-left: 3px solid " + getPropertyString("borderColor") + " !important;\">";
         } else {
-            html += "<div class=\"subform-container no-frame"+readonlyCss+"\">";
+            html += "<div class=\"subform-container no-frame" + readonlyCss + "\">";
         }
 
         String formHtml = form.render(rowFormData, false);
@@ -514,49 +561,49 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
         html += "</div>";
         html += "</td>";
-        
-        if ("enable".equals(getPropertyString("deleteMode")) 
-            || "enable".equals(getPropertyString("addMode")) 
-            || "true".equals(getPropertyString("collapsible"))) {
-        
+
+        if ("enable".equals(getPropertyString("deleteMode"))
+                || "enable".equals(getPropertyString("addMode"))
+                || "true".equals(getPropertyString("collapsible"))) {
+
             html += "<td class=\"repeater-action\">";
- 
+
             if (!("oneTop".equals(mode) || "oneBottom".equals(mode))) {
                 html += "<div class=\"dropdown\">";
-                html += "<button class=\"dropdown-toggle\" title=\"More Actions\"><i class=\"fas fa-ellipsis-v\"></i></button>";  
-                if(!getPropertyString("dropdownBorderColor").isEmpty()) {
+                html += "<button class=\"dropdown-toggle\" title=\"More Actions\"><i class=\"fas fa-ellipsis-v\"></i></button>";
+                if (!getPropertyString("dropdownBorderColor").isEmpty()) {
                     html += "<div class=\"dropdown-menu\" style=\"border: 1px solid " + getPropertyString("dropdownBorderColor") + " !important;\">";
                 } else {
                     html += "<div class=\"dropdown-menu\">";
                 }
                 if (!FormUtil.isReadonly(this, formData) && "enable".equals(getPropertyString("addMode"))) {
                     html += "<a class=\"repeater-action-add add-row-before btn btn-sm btn-primary\" title=\""
-                        + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)
-                        + "\">"
-                        + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)
-                        + "</a>";
+                            + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)
+                            + "\">"
+                            + AppPluginUtil.getMessage("form.subformRepeater.add", getClassName(), MESSAGE_PATH)
+                            + "</a>";
                 }
                 if ("true".equals(getPropertyString("collapsible"))) {
                     html += "<a class=\"repeater-collapsible btn btn-sm btn-primary\" title=\""
-                        + AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)
-                        + "\">"
-                        + AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)
-                        + "</a>";
+                            + AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)
+                            + "\">"
+                            + AppPluginUtil.getMessage("form.subformRepeater.collapse", getClassName(), MESSAGE_PATH)
+                            + "</a>";
                 }
                 if (readonlyCss.isEmpty() && "enable".equals(getPropertyString("deleteMode"))) {
                     html += "<a class=\"repeater-action-delete btn btn-sm btn-primary\" title=\""
-                        + AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)
-                        + "\">"
-                        + AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)
-                        + "</a>";
+                            + AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)
+                            + "\">"
+                            + AppPluginUtil.getMessage("form.subformRepeater.delete", getClassName(), MESSAGE_PATH)
+                            + "</a>";
                 }
                 html += "</div>";
                 html += "</div>";
             }
-        
+
             html += "</td>";
         }
-        
+
         html += "</tr>";
 
         return html;
@@ -620,7 +667,8 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     decorator = "*";
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return decorator;
     }
@@ -637,7 +685,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             int count = 0;
             for (FormRow r : rowSet) {
                 //set sorting
-                if (getPropertyString("enableSorting") != null && getPropertyString("enableSorting").equals("true") && getPropertyString("sortField") != null && !getPropertyString("sortField").isEmpty()){
+                if (getPropertyString("enableSorting") != null && getPropertyString("enableSorting").equals("true") && getPropertyString("sortField") != null && !getPropertyString("sortField").isEmpty()) {
                     String sortField = getPropertyString("sortField");
                     r.setProperty(sortField, Integer.toString(count));
                 }
@@ -695,7 +743,6 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     String processId = formData.getProcessId();
                     if (activityId != null || processId != null) {
 
-                        
                         Map<String, String> variableMap = new HashMap<String, String>();
                         variableMap = storeWorkflowVariables(getEditableForm(getPropertyString("addMode")), submitedRow, variableMap);
 
@@ -736,22 +783,23 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
     public String getServiceUrl() {
         if ("enable".equals(getPropertyString("addMode"))) {
-            String url = WorkflowUtil.getHttpServletRequest().getContextPath()+ "/web/json/plugin/org.joget.SubformRepeater/service";
+            String url = WorkflowUtil.getHttpServletRequest().getContextPath() + "/web/json/plugin/org.joget.SubformRepeater/service";
             AppDefinition appDef = AppUtil.getCurrentAppDefinition();
 
             //create nonce
             String paramName = FormUtil.getElementParameterName(this);
             String nonce = SecurityUtil.generateNonce(new String[]{"SubformRepeater", appDef.getAppId(), appDef.getVersion().toString(), paramName}, 1);
             try {
-                url = url + "?_nonce="+URLEncoder.encode(nonce, "UTF-8")+"&_paramName="+URLEncoder.encode(paramName, "UTF-8")+"&_appId="+URLEncoder.encode(appDef.getAppId(), "UTF-8")+"&_appVersion="+URLEncoder.encode(appDef.getVersion().toString(), "UTF-8");
+                url = url + "?_nonce=" + URLEncoder.encode(nonce, "UTF-8") + "&_paramName=" + URLEncoder.encode(paramName, "UTF-8") + "&_appId=" + URLEncoder.encode(appDef.getAppId(), "UTF-8") + "&_appVersion=" + URLEncoder.encode(appDef.getVersion().toString(), "UTF-8");
                 url += "&_enableSorting=" + URLEncoder.encode(getPropertyString("enableSorting"), "UTF-8");
                 url += "&_sortField=" + URLEncoder.encode(getPropertyString("sortField"), "UTF-8");
                 url += "&_formDefId=" + URLEncoder.encode(getPropertyString("formDefId"), "UTF-8");
                 url += "&_deleteMode=" + URLEncoder.encode(getPropertyString("deleteMode"), "UTF-8");
                 url += "&_addMode=" + URLEncoder.encode(getPropertyString("addMode"), "UTF-8");
                 url += "&_collapsible=" + URLEncoder.encode(getPropertyString("collapsible"), "UTF-8");
-                url += "&_processId=" + URLEncoder.encode((this.formData.getProcessId() != null?this.formData.getProcessId():""), "UTF-8");
-            } catch (Exception e) {}
+                url += "&_processId=" + URLEncoder.encode((this.formData.getProcessId() != null ? this.formData.getProcessId() : ""), "UTF-8");
+            } catch (Exception e) {
+            }
             return url;
         } else {
             return "";
@@ -791,7 +839,8 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     } else {
                         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                     }
-                } catch (Exception ex) {}
+                } catch (Exception ex) {
+                }
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
