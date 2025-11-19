@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletException;
@@ -51,6 +52,9 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
     private Map<String, FormRow> existing = new HashMap<String, FormRow>();
     private Map<String, Form> forms = new HashMap<String, Form>();
     private Map<String, FormDefinition> formDefs = new HashMap<String, FormDefinition>();
+
+    private boolean afterValidation = false;
+    private Map<String, Map<String, String>> cacheRowFormDataErrorMap = new HashMap<String, Map<String, String>>();
 
     @Override
     public String getName() {
@@ -546,6 +550,15 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             html += "<div class=\"subform-container no-frame" + readonlyCss + "\">";
         }
 
+        //get the already validated subform errors from selfValidate()
+        Map<String, String> cacheErrorMap = cacheRowFormDataErrorMap.get(uniqueValue);
+        if(afterValidation && cacheErrorMap != null && !cacheErrorMap.isEmpty()) {
+            //FormUtil.executeValidators(form, rowFormData);
+            for(Map.Entry<String, String> e : cacheErrorMap.entrySet()) {
+                rowFormData.addFormError(e.getKey(), e.getValue());
+            }
+        }
+
         String formHtml = form.render(rowFormData, false);
         formHtml = formHtml.replaceAll("\"form-section", "\"subform-section");
         formHtml = formHtml.replaceAll("\"form-column", "\"subform-column");
@@ -627,6 +640,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 FormUtil.executeValidators(form, rowFormData);
 
                 if (form.hasError(rowFormData)) {
+                    cacheRowFormDataErrorMap.put(uv, rowFormData.getFormErrors());
                     rowsValid = false;
                 }
             }
@@ -651,6 +665,8 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 }
             }
         }
+
+        afterValidation = true;
 
         return valid;
     }
