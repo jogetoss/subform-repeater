@@ -147,7 +147,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
                     for (String uv : uniqueValues) {
                         if (!uv.isEmpty()) {
-                            String paramPrefix = uv + "_" + param;
+                            String paramPrefix = param + "_" + uv; // realign getRows(0 with createForm() matching the child element parameter naming the createForm()
                             String rId = formData.getRequestParameter(paramPrefix + "_" + FormUtil.PROPERTY_ID);
                             FormRow r = null;
                             if ("disable".equals(getPropertyString("editMode")) && rId != null && !rId.isEmpty() && existing.containsKey(rId)) {

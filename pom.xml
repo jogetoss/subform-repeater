@@ -4,7 +4,7 @@
     <groupId>org.joget</groupId>
     <artifactId>subform_repeater</artifactId>
     <packaging>bundle</packaging>
-    <version>8.0.5</version>
+    <version>8.0.6</version>
     <name>subform_repeater</name>
     <url>https://www.joget.org</url>
     <properties>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.joget</groupId>
             <artifactId>wflow-core</artifactId>
-            <version>7.0-SNAPSHOT</version>
+            <version>8.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
