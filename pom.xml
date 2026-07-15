@@ -4,7 +4,7 @@
     <groupId>org.joget</groupId>
     <artifactId>subform_repeater</artifactId>
     <packaging>bundle</packaging>
-    <version>8.0.5</version>
+    <version>8.0.6</version>
     <name>subform_repeater</name>
     <url>https://www.joget.org</url>
     <properties>
@@ -78,6 +78,10 @@
                 <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.aspectj</groupId>
+                    <artifactId>aspectjweaver</artifactId>
                 </exclusion>
             </exclusions>
             <scope>provided</scope>
