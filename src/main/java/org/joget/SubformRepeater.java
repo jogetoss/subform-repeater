@@ -147,7 +147,7 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
 
                     for (String uv : uniqueValues) {
                         if (!uv.isEmpty()) {
-                            String paramPrefix = uv + "_" + param;
+                            String paramPrefix = param + "_" + uv; // realign getRows() with createForm()/updateElement() child element parameter naming
                             String rId = formData.getRequestParameter(paramPrefix + "_" + FormUtil.PROPERTY_ID);
                             FormRow r = null;
                             if ("disable".equals(getPropertyString("editMode")) && rId != null && !rId.isEmpty() && existing.containsKey(rId)) {
@@ -189,6 +189,17 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             FormRowSet rowSet = new FormRowSet();
             rowSet.add(rowData);
             rowFormData.setLoadBinderData(loadBinder, rowSet);
+
+            //also recursively load binder data for nested elements (e.g. Multi Paged Form/Subform),
+            //matching getRowTemplate(), so their readonly fields resolve to the stored value on submit
+            //instead of falling back to an empty value and wiping out previously saved data
+            rowFormData.setPrimaryKeyValue(rowData.getId());
+            Collection<Element> loadChildren = form.getChildren(rowFormData);
+            if (loadChildren != null) {
+                for (Element child : loadChildren) {
+                    FormUtil.executeLoadBinders(child, rowFormData);
+                }
+            }
         }
         FormUtil.executeElementFormatDataForValidation(form, rowFormData);
         FormUtil.executeElementFormatData(form, rowFormData);
