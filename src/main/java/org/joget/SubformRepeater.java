@@ -23,6 +23,7 @@ import org.joget.apps.app.service.AppService;
 import org.joget.apps.app.service.AppUtil;
 import org.joget.apps.form.lib.Grid;
 import org.joget.apps.form.lib.HiddenField;
+import org.joget.apps.form.lib.IdGeneratorField;
 import org.joget.apps.form.model.AbstractSubForm;
 import org.joget.apps.form.model.Element;
 import org.joget.apps.form.model.Form;
@@ -190,9 +191,6 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             rowSet.add(rowData);
             rowFormData.setLoadBinderData(loadBinder, rowSet);
 
-            //also recursively load binder data for nested elements (e.g. Multi Paged Form/Subform),
-            //matching getRowTemplate(), so their readonly fields resolve to the stored value on submit
-            //instead of falling back to an empty value and wiping out previously saved data
             rowFormData.setPrimaryKeyValue(rowData.getId());
             Collection<Element> loadChildren = form.getChildren(rowFormData);
             if (loadChildren != null) {
@@ -201,8 +199,14 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                 }
             }
         }
+        Map<Element, String> suppressedIdGenerators = new HashMap<Element, String>();
+        suppressIdGeneratorFields(form, rowFormData, suppressedIdGenerators);
+
         FormUtil.executeElementFormatDataForValidation(form, rowFormData);
         FormUtil.executeElementFormatData(form, rowFormData);
+
+        restoreIdGeneratorFields(suppressedIdGenerators);
+
         formDatas.put(uv, rowFormData);
 
         FormStoreBinder storeBinder = form.getStoreBinder();
@@ -212,6 +216,26 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
             return submitedRows.get(0);
         } else {
             return new FormRow();
+        }
+    }
+
+
+    protected void suppressIdGeneratorFields(Element element, FormData formData, Map<Element, String> saved) {
+        if (element instanceof IdGeneratorField) {
+            saved.put(element, element.getPropertyString(FormUtil.PROPERTY_READONLY));
+            element.setProperty(FormUtil.PROPERTY_READONLY, "true");
+        }
+        Collection<Element> children = element.getChildren(formData);
+        if (children != null) {
+            for (Element child : children) {
+                suppressIdGeneratorFields(child, formData, saved);
+            }
+        }
+    }
+
+    protected void restoreIdGeneratorFields(Map<Element, String> saved) {
+        for (Map.Entry<Element, String> entry : saved.entrySet()) {
+            entry.getKey().setProperty(FormUtil.PROPERTY_READONLY, entry.getValue());
         }
     }
 
@@ -711,6 +735,25 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         try {
             int count = 0;
             for (FormRow r : rowSet) {
+                String uv = r.getProperty("RS_UNIQUE_VALUE");
+                if (uv != null) {
+                    FormData rowFormData = formDatas.get(uv);
+                    if (rowFormData != null) {
+                        Form form = getEditableForm(uv);
+                        FormUtil.executeElementFormatData(form, rowFormData);
+
+                        FormStoreBinder storeBinder = form.getStoreBinder();
+                        FormRowSet submittedRows = rowFormData.getStoreBinderData(storeBinder);
+                        if (submittedRows != null && !submittedRows.isEmpty()) {
+                            FormRow updated = submittedRows.get(0);
+                            r.putAll(updated);
+                            if (updated.getId() != null && !updated.getId().isEmpty()) {
+                                r.setId(updated.getId());
+                            }
+                        }
+                    }
+                }
+
                 //set sorting
                 if (getPropertyString("enableSorting") != null && getPropertyString("enableSorting").equals("true") && getPropertyString("sortField") != null && !getPropertyString("sortField").isEmpty()) {
                     String sortField = getPropertyString("sortField");
