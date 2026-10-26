@@ -3,6 +3,7 @@ package org.joget;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -229,6 +230,18 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
         if (children != null) {
             for (Element child : children) {
                 suppressIdGeneratorFields(child, formData, saved);
+            }
+        }
+    }
+
+    protected void findIdGeneratorFields(Element element, FormData formData, List<Element> found) {
+        if (element instanceof IdGeneratorField) {
+            found.add(element);
+        }
+        Collection<Element> children = element.getChildren(formData);
+        if (children != null) {
+            for (Element child : children) {
+                findIdGeneratorFields(child, formData, found);
             }
         }
     }
@@ -740,7 +753,11 @@ public class SubformRepeater extends Grid implements PluginWebSupport {
                     FormData rowFormData = formDatas.get(uv);
                     if (rowFormData != null) {
                         Form form = getEditableForm(uv);
-                        FormUtil.executeElementFormatData(form, rowFormData);
+                        List<Element> idGenerators = new ArrayList<Element>();
+                        findIdGeneratorFields(form, rowFormData, idGenerators);
+                        for (Element idGenerator : idGenerators) {
+                            FormUtil.executeElementFormatData(idGenerator, rowFormData);
+                        }
 
                         FormStoreBinder storeBinder = form.getStoreBinder();
                         FormRowSet submittedRows = rowFormData.getStoreBinderData(storeBinder);
